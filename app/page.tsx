@@ -399,7 +399,7 @@ function JavierHomeScreen({ onOpenCase }: { onOpenCase: () => void }) { return <
 function PrepScreen({ onAskAssist }: { onAskAssist: () => void }) { return <div className={styles.screenContent}>
   <div className={styles.caseTitleBlock}><div className={styles.chipRow}><Chip text="CRM" tone="division" /><Chip text="Ready" tone="positive" /></div><h2>ICD Implant</h2><p>Methodist Hospital · Dr. Aaron Smith</p><strong>Today · 3:00 PM</strong></div>
   <section className={styles.surfaceCard}><h3>Case readiness</h3><ReadinessRow label="Procedure details" value="Confirmed" positive /><ReadinessRow label="Clinical assignment" value="You are assigned" positive /><ReadinessRow label="Required inventory" value="Available on site" positive /><ReadinessRow label="Physician preferences" value="Available" /><ReadinessRow label="Procedure worksheet" value="Template prepared" positive /></section>
-  <section className={styles.inventoryInsight}><div className={styles.assistTag}><Sparkle /> Inventory insight</div><h3>Expiration opportunity identified</h3><p>One compatible ICD lead at Methodist expires in 8 days and may be eligible for this case. If used, stock will fall below par and a replenishment request can be prepared after confirmation.</p><button className={styles.textLink} type="button" onClick={onAskAssist}>Ask Assist about inventory <ArrowRight /></button></section>
+  <section className={styles.inventoryInsight}><div className={styles.assistTag}><Sparkle /> Inventory insight</div><h3>Expiration opportunity identified</h3><p>One compatible ICD lead at Methodist expires in 8 days and may be eligible for this case. If used, stock will fall below par and a reorder request can be prepared after confirmation.</p><button className={styles.textLink} type="button" onClick={onAskAssist}>Ask Assist about inventory <ArrowRight /></button></section>
   <section className={styles.documentationPrepared}><div><p className={styles.subsectionLabel}>Procedure documentation</p><h3>ICD Implant worksheet prepared</h3><p>Available after procedure completion.</p></div><Chip text="Prepared" tone="positive" /></section>
 </div>; }
 
@@ -458,14 +458,14 @@ function ReviewScreen({ onSubmit }: { onSubmit: () => void }) { const sections =
 function PdfScreen({ onReorder, onToast }: { onReorder: () => void; onToast: (message: string) => void }) { return <div className={styles.screenContent}>
   <section className={styles.successBanner}><CheckCircle /><div><h2>Procedure record submitted</h2><p>The ICD Implant record is complete and inventory utilization has been recorded.</p></div></section>
   <section className={styles.surfaceCard}><p className={styles.subsectionLabel}>Generate output</p><h3>Select information to include</h3><div className={styles.checklist}><CheckOption label="Procedure summary" /><CheckOption label="Account and physician details" /><CheckOption label="Implanted devices" /><CheckOption label="Measured data" /><CheckOption label="Programmed parameters" /><CheckOption label="Proof of delivery" /></div><button className={styles.secondaryButton} type="button" onClick={() => onToast("PDF prepared. Print and secure email delivery would be available in the production experience.")}>Generate PDF</button></section>
-  <section className={styles.replenishCard}><div className={styles.assistTag}><Sparkle /> Replenishment recommended</div><h3>Methodist is now below recommended par</h3><p>The ICD lead used reduced expiration risk, but the account now needs replenishment to protect future case readiness.</p><button className={styles.primaryInlineButton} type="button" onClick={onReorder}>Review reorder <ArrowRight /></button></section>
+  <section className={styles.replenishCard}><div className={styles.assistTag}><Sparkle /> Replenishment recommended</div><h3>Methodist is now below recommended par</h3><p>The ICD lead used reduced expiration risk, but the account now needs reorder to protect future case readiness.</p><button className={styles.primaryInlineButton} type="button" onClick={onReorder}>Review reorder <ArrowRight /></button></section>
 </div>; }
 
 function ReorderScreen({ onDone }: { onDone: () => void }) { return <div className={styles.screenContent}>
   <div className={styles.caseTitleBlock}><div className={styles.chipRow}><Chip text="CRM" tone="division" /><Chip text="Recommended" tone="action" /></div><h2>Replenishment request</h2><p>Methodist Hospital · ICD Inventory</p></div>
   <section className={styles.surfaceCard}><h3>Inventory impact</h3><ReadinessRow label="Device used" value="Vigilant™ EL ICD" /><ReadinessRow label="Inventory source" value="Account consignment" /><ReadinessRow label="Expiration avoided" value="8 days remaining" positive /><ReadinessRow label="Current stock" value="Below par" attention /><ReadinessRow label="Recommended quantity" value="1 replacement unit" /></section>
-  <section className={styles.aiInsightCard}><div className={styles.assistTag}><Sparkle /> Assist recommendation</div><p>Prepare a replenishment request for one replacement unit to restore the account’s recommended par level before its next scheduled ICD procedure.</p></section>
-  <button className={styles.primaryButton} type="button" onClick={onDone}>Prepare replenishment request</button><button className={styles.secondaryButton} type="button">Review account inventory</button>
+  <section className={styles.aiInsightCard}><div className={styles.assistTag}><Sparkle /> Assist recommendation</div><p>Prepare a reorder request for one replacement unit to restore the account’s recommended par level before its next scheduled ICD procedure.</p></section>
+  <button className={styles.primaryButton} type="button" onClick={onDone}>Prepare reorder request</button><button className={styles.secondaryButton} type="button">Review account inventory</button>
 </div>; }
 
 
@@ -492,7 +492,7 @@ function JordanHomeScreen({ onOpenAccount, onStaticJourney }: { onOpenAccount: (
     <div className={styles.chipRow}><Chip text="Watchman" tone="division" /></div>
     <h3>North Memorial</h3>
     <p className={styles.cardDescription}>Dr. Elena Patel</p>
-    <p className={styles.supportingText}>Upcoming LAA Closure is ready; replenishment is expected after planned device use.</p>
+    <p className={styles.supportingText}>Upcoming LAA Closure is ready; reorder is expected after planned device use.</p>
     <button className={styles.cardAction} type="button" onClick={() => onStaticJourney("Additional Watchman account insights are not included in this walkthrough.")}>View readiness <ArrowRight /></button>
   </article>
 </div>; }
@@ -502,7 +502,7 @@ function AccountInsightScreen({ onAskAssist }: { onAskAssist: () => void }) { re
   <section className={styles.surfaceCard}><h3>Why this account surfaced</h3>
     <div className={styles.signalReason}><span className={styles.reasonIcon}>1</span><div><strong>Urgent case activity</strong><p>Two urgent CRM add-on procedures were added this week.</p></div></div>
     <div className={styles.signalReason}><span className={styles.reasonIcon}>2</span><div><strong>Coverage response</strong><p>Today’s same-day ICD coverage request was resolved with Javier Ruiz.</p></div></div>
-    <div className={styles.signalReason}><span className={styles.reasonIcon}>3</span><div><strong>Inventory follow-through</strong><p>A replenishment request is prepared after documented device use.</p></div></div>
+    <div className={styles.signalReason}><span className={styles.reasonIcon}>3</span><div><strong>Inventory follow-through</strong><p>A reorder request is prepared after documented device use.</p></div></div>
   </section>
   <section className={styles.aiInsightCard}><div className={styles.assistTag}><Sparkle /> Assist insight</div><p>Recent procedure activity may indicate near-term demand at Methodist. I can help prioritize physician outreach based on account signals and upcoming scheduled cases.</p></section>
   <button className={styles.primaryButton} type="button" onClick={onAskAssist}>Ask which physician to prioritize</button>
