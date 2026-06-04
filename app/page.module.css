@@ -2031,118 +2031,11 @@
 
 @media (max-width: 520px) {
   .stage,
-  
-/* Increment 4: Territory Manager account signal ending */
-.territoryHero {
-  padding: 18px;
-  border: 1px solid var(--accent-primary-80);
-  border-radius: 17px;
-  background: var(--neutral-100);
-}
-
-.territoryHero h3 {
-  margin: 12px 0 8px;
-  color: var(--neutral-20);
-  font-size: 20px;
-  line-height: 25px;
-  letter-spacing: -0.02em;
-}
-
-.territoryHero p {
-  margin: 0 0 14px;
-  color: var(--neutral-40);
-  font-size: 14px;
-  line-height: 20px;
-}
-
-.signalCard {
-  padding: 15px 15px 14px;
-  border: 1px solid var(--neutral-80);
-  border-radius: 17px;
-  background: var(--neutral-100);
-}
-
-.signalCard + .signalCard {
-  margin-top: 10px;
-}
-
-.signalPriority {
-  border-color: var(--action-primary-80);
-  box-shadow: 0 0.125rem 0.625rem rgba(1, 83, 204, 0.08);
-}
-
-.signalCard h3 {
-  margin: 12px 0 4px;
-  color: var(--neutral-20);
-  font-size: 16px;
-  line-height: 21px;
-}
-
-.signalCard .supportingText {
-  margin: 11px 0 12px;
-}
-
-.signalReason {
-  display: flex;
-  gap: 11px;
-  padding: 12px 0;
-  border-top: 1px solid var(--neutral-95);
-}
-
-.signalReason:first-of-type {
-  margin-top: 8px;
-}
-
-.reasonIcon {
-  width: 23px;
-  height: 23px;
-  flex: 0 0 23px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  color: var(--accent-primary-30);
-  background: var(--accent-primary-95);
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.signalReason strong {
-  color: var(--neutral-20);
-  font-size: 13px;
-  line-height: 18px;
-}
-
-.signalReason p {
-  margin: 3px 0 0;
-  color: var(--neutral-40);
-  font-size: 12px;
-  line-height: 17px;
-}
-
-.territoryRecommendation {
-  margin: 12px 0 0;
-  padding: 15px;
-  border-radius: 15px;
-  background: var(--accent-primary-95);
-}
-
-.territoryRecommendation h3 {
-  margin: 7px 0 6px;
-  color: var(--neutral-20);
-  font-size: 15px;
-  line-height: 20px;
-}
-
-.territoryRecommendation > p:not(.subsectionLabel) {
-  margin: 0 0 13px;
-  color: var(--neutral-40);
-  font-size: 13px;
-  line-height: 19px;
-}
-
-.appOnlyStage {
+  .appOnlyStage {
     padding: 0;
+    gap: 0;
+    justify-content: flex-start;
+    background: var(--neutral-100);
   }
 
   .prototypeBar,
@@ -2159,7 +2052,12 @@
 
   .previewLayout .phone,
   .appOnlyLayout .phone {
+    width: 100%;
     height: 100dvh;
+    min-height: 100dvh;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
   }
 }
 
@@ -2251,3 +2149,344 @@
 .workloadImpact { margin: 12px 0; padding: 11px 12px; border-radius: 13px; background: var(--accent-primary-95); }
 .workloadImpact strong { font-size: 12px; color: var(--accent-primary-30); }
 .workloadImpact p { margin: 5px 0 0; font-size: 12px; line-height: 17px; color: var(--neutral-20); }
+
+/* Increment 5 polish: schedule rhythm and fully styled Assist sheets */
+
+/* Allow room for persistent navigation and the Assist floating action button. */
+.screenContent {
+  padding: 20px 16px 132px;
+}
+
+/* Schedule header and controls */
+.scheduleHeader {
+  margin-bottom: 18px;
+  align-items: flex-end;
+}
+
+.scheduleHeader h2 {
+  font-size: 25px;
+  line-height: 31px;
+}
+
+.filterButton {
+  min-height: 42px;
+  padding: 0 14px;
+  border-radius: 13px;
+}
+
+.scheduleToggle {
+  margin-bottom: 16px;
+  gap: 5px;
+  padding: 4px;
+  border-radius: 16px;
+}
+
+.scheduleToggle button {
+  height: 46px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.dateStrip {
+  justify-content: flex-start;
+  gap: 10px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+
+.dateStrip::-webkit-scrollbar {
+  display: none;
+}
+
+.dateStrip button {
+  flex: 0 0 58px;
+  height: 62px;
+  gap: 3px;
+  border-radius: 16px;
+}
+
+.dateStrip span {
+  font-size: 12px;
+}
+
+.dateStrip strong {
+  font-size: 17px;
+}
+
+.scheduleSummary {
+  margin-bottom: 22px;
+  padding: 18px 16px;
+  border: 0;
+  border-radius: 21px;
+  background: var(--neutral-100);
+  box-shadow: var(--shadow-secondary);
+}
+
+.scheduleSummary h3 {
+  margin: 12px 0 7px;
+  font-size: 18px;
+  line-height: 24px;
+}
+
+.scheduleSummary p {
+  font-size: 14px;
+  line-height: 20px;
+}
+
+/* Day timeline */
+.timeline {
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.timelineRow,
+.bufferRow {
+  grid-template-columns: 72px 1fr;
+  gap: 12px;
+}
+
+.timelineTime {
+  padding-top: 19px;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.timelineCard {
+  padding: 16px 15px 16px;
+  border-left-width: 4px;
+  border-radius: 20px;
+  box-shadow: 0 0.125rem 0.625rem rgba(0, 0, 0, 0.04);
+}
+
+.timelineCard h3 {
+  margin: 10px 0 4px;
+  font-size: 16px;
+  line-height: 21px;
+}
+
+.timelineCard p {
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 19px;
+}
+
+.timelineStatus {
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+.bufferCard {
+  padding: 16px 14px;
+  border-radius: 17px;
+}
+
+/* Team schedule cards */
+.teamStats {
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.teamStats .metric {
+  min-height: 88px;
+  padding: 14px;
+  border-radius: 18px;
+}
+
+.teamMember {
+  margin-bottom: 14px;
+  padding: 17px 16px 18px;
+  border-radius: 21px;
+  box-shadow: 0 0.125rem 0.625rem rgba(0, 0, 0, 0.035);
+}
+
+.teamMember + .teamMember {
+  margin-top: 0;
+}
+
+.teamMemberTop {
+  gap: 12px;
+}
+
+.teamMemberTop .personAvatar {
+  width: 44px;
+  height: 44px;
+  font-size: 13px;
+}
+
+.teamMemberTop h3 {
+  font-size: 16px;
+  line-height: 21px;
+}
+
+.teamMemberTop p {
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.teamStatus {
+  max-width: 118px;
+  padding: 7px 10px;
+  font-size: 11px;
+  line-height: 14px;
+}
+
+.teamMemberDetail {
+  margin-top: 13px;
+  font-size: 13px;
+  line-height: 19px;
+}
+
+.teamMember .textLink {
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+/* Keep persistent app controls clear of the scrolling content. */
+.assistFab {
+  right: 16px;
+  bottom: 87px;
+  min-height: 48px;
+  padding: 0 18px;
+  border-radius: 999px;
+  box-shadow: 0 10px 24px rgba(136, 0, 204, 0.22);
+}
+
+/* Shared overlay for the workload Assist flow. */
+.sheetBackdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  display: flex;
+  align-items: flex-end;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.sheetGrab {
+  width: 44px;
+  height: 5px;
+  margin: 0 auto 18px;
+  border-radius: 100px;
+  background: var(--neutral-80);
+}
+
+/* All Assist sheets receive the same polished bottom-sheet treatment. */
+.assistSheet {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  max-height: 78%;
+  overflow-y: auto;
+  padding: 10px 18px 28px;
+  border-radius: 30px 30px 0 0;
+  background: var(--neutral-100);
+  box-shadow: 0 -12px 34px rgba(0, 0, 0, 0.16);
+  scrollbar-width: none;
+}
+
+.assistSheet::-webkit-scrollbar {
+  display: none;
+}
+
+.sheetHeader {
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.sheetHeader .assistTag {
+  font-size: 15px;
+  line-height: 20px;
+}
+
+.sheetHeader .assistTag svg {
+  width: 18px;
+  height: 18px;
+}
+
+.sheetContext {
+  margin: 0 0 16px;
+  color: var(--neutral-40);
+  font-size: 14px;
+  line-height: 21px;
+}
+
+.suggestedPrompt {
+  width: 100%;
+  padding: 16px;
+  border: 1px solid var(--action-primary-95);
+  border-radius: 18px;
+  color: var(--neutral-20);
+  background: var(--action-primary-97);
+  text-align: left;
+  font-size: 15px;
+  line-height: 22px;
+  font-weight: 500;
+}
+
+.suggestedPrompt:hover {
+  border-color: var(--action-primary-80);
+  background: var(--action-primary-95);
+}
+
+.assistSheet .userMessage {
+  max-width: 92%;
+  margin-left: auto;
+  margin-bottom: 14px;
+  padding: 13px 14px;
+  border-radius: 19px 19px 5px 19px;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.assistantReply {
+  margin-bottom: 14px;
+  padding: 15px;
+  border: 1px solid rgba(136, 0, 204, 0.12);
+  border-radius: 18px;
+  background: var(--accent-primary-95);
+}
+
+.assistantReply p {
+  margin: 10px 0 0;
+  color: var(--neutral-20);
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.assistSheet .reassignmentCard {
+  margin-top: 0;
+  margin-bottom: 11px;
+  padding: 14px;
+  border-radius: 17px;
+}
+
+.assistSheet .reassignmentCard strong {
+  font-size: 14px;
+  line-height: 19px;
+}
+
+.assistSheet .reassignmentCard p {
+  margin: 6px 0 4px;
+  font-size: 13px;
+  line-height: 19px;
+}
+
+.assistSheet .reassignmentCard span {
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.assistSheet .workloadImpact {
+  margin: 14px 0 16px;
+  padding: 14px;
+  border-radius: 17px;
+}
+
+.assistSheet .workloadImpact p {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 19px;
+}
+
