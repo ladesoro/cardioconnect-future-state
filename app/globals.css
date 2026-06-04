@@ -1,0 +1,62 @@
+:root {
+  --brand-logo-blue: #003c71;
+  --neutral-00: #000000;
+  --neutral-20: #333333;
+  --neutral-40: #666666;
+  --neutral-60: #999999;
+  --neutral-80: #cccccc;
+  --neutral-95: #f2f2f2;
+  --neutral-100: #ffffff;
+  --action-primary-10: #001433;
+  --action-primary-20: #012965;
+  --action-primary-40: #0153cc;
+  --action-primary-60: #3485fe;
+  --action-primary-80: #9ac2fe;
+  --action-primary-95: #e6f0ff;
+  --action-primary-97: #f2f7ff;
+  --accent-primary-20: #440066;
+  --accent-primary-30: #660099;
+  --accent-primary-40: #8800cc;
+  --accent-primary-60: #bb33ff;
+  --accent-primary-95: #f7e6ff;
+  --accent-secondary-20: #005f66;
+  --accent-secondary-40: #00becc;
+  --accent-secondary-95: #e6fdff;
+  --feedback-error-40: #b31921;
+  --feedback-error-95: #fce9ea;
+  --shadow-secondary: 0 0.125rem 1rem 0 rgba(0, 0, 0, 0.1);
+  --shadow-phone: 0 1.25rem 3.5rem rgba(0, 0, 0, 0.15);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  color: var(--neutral-20);
+  background: var(--neutral-95);
+  font-family: "SST", "Source Sans 3", "Segoe UI", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  cursor: pointer;
+}
+
+button:focus-visible {
+  outline: 3px solid var(--action-primary-80);
+  outline-offset: 2px;
+}
