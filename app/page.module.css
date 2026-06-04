@@ -2162,3 +2162,92 @@
     height: 100dvh;
   }
 }
+
+
+/* Increment 5: intelligent mobile Schedule experience */
+.scheduleHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+.scheduleHeader .eyebrow { margin-bottom: 4px; }
+.scheduleHeader h2 { margin: 0; font-size: 23px; line-height: 29px; letter-spacing: -0.025em; }
+.filterButton {
+  min-height: 35px; padding: 0 12px; border: 1px solid var(--neutral-80); border-radius: 11px;
+  background: var(--neutral-100); color: var(--action-primary-40); font-size: 13px; font-weight: 650;
+}
+.scheduleToggle {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; padding: 3px;
+  border-radius: 13px; background: var(--neutral-95);
+}
+.scheduleToggle button {
+  height: 38px; border-radius: 10px; color: var(--neutral-40); background: transparent; font-size: 13px; font-weight: 600;
+}
+.scheduleToggle button:disabled { opacity: 0.45; }
+.scheduleToggle .scheduleToggleActive {
+  color: var(--action-primary-40); background: var(--neutral-100); box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+.dateStrip { display: flex; justify-content: space-between; gap: 6px; }
+.dateStrip button {
+  width: 58px; height: 56px; display: flex; flex-direction: column; justify-content: center; align-items: center;
+  gap: 2px; border-radius: 13px; color: var(--neutral-40); background: var(--neutral-100);
+}
+.dateStrip span { font-size: 11px; font-weight: 600; }
+.dateStrip strong { color: var(--neutral-20); font-size: 15px; font-weight: 650; }
+.dateStrip .dateSelected { color: var(--action-primary-40); background: var(--action-primary-95); }
+.dateStrip .dateSelected strong { color: var(--action-primary-20); }
+.scheduleSummary {
+  padding: 14px 15px; border-radius: 16px; border: 1px solid var(--accent-primary-80); background: var(--neutral-100);
+}
+.scheduleSummary h3 { margin: 9px 0 4px; font-size: 16px; line-height: 21px; }
+.scheduleSummary p { margin: 0; color: var(--neutral-40); font-size: 13px; line-height: 18px; }
+.timeline { display: flex; flex-direction: column; gap: 10px; }
+.timelineRow, .bufferRow { display: grid; grid-template-columns: 66px 1fr; gap: 8px; align-items: stretch; }
+.timelineTime { padding-top: 12px; color: var(--neutral-40); font-size: 11px; font-weight: 650; }
+.timelineCard {
+  display: block; width: 100%; padding: 11px 12px; text-align: left; border-radius: 15px;
+  border-left: 4px solid var(--neutral-80); background: var(--neutral-100);
+}
+.timelineCard h3 { margin: 7px 0 2px; color: var(--neutral-20); font-size: 14px; line-height: 18px; }
+.timelineCard p { margin: 0 0 7px; color: var(--neutral-40); font-size: 12px; line-height: 17px; }
+.timelineStatus { display: inline-flex; padding: 4px 7px; border-radius: 999px; font-size: 11px; font-weight: 650; }
+.timelineReady { border-left-color: var(--accent-secondary-40); }
+.timelineReady .timelineStatus { color: var(--accent-secondary-20); background: var(--accent-secondary-95); }
+.timelineInsight { border-left-color: var(--accent-primary-40); }
+.timelineInsight .timelineStatus { color: var(--accent-primary-30); background: var(--accent-primary-95); }
+.timelineAction { border-left-color: var(--action-primary-40); }
+.timelineAction .timelineStatus { color: var(--action-primary-20); background: var(--action-primary-95); }
+.timelineHighlighted { box-shadow: 0 2px 10px rgba(1,83,204,0.08); }
+.bufferCard {
+  padding: 14px 12px; border: 1px dashed var(--neutral-80); border-radius: 14px; color: var(--neutral-40);
+  background: transparent; font-size: 12px; font-weight: 600;
+}
+.teamStats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.teamStats .metric { min-width: 0; }
+.teamMember {
+  padding: 13px 13px 12px; border: 1px solid var(--neutral-80); border-radius: 16px; background: var(--neutral-100);
+}
+.teamMember + .teamMember { margin-top: -2px; }
+.teamMemberInsight { border-color: var(--accent-primary-80); }
+.teamMemberTop { display: flex; align-items: center; gap: 9px; }
+.teamMemberTop .personAvatar { width: 37px; height: 37px; font-size: 12px; }
+.teamMemberTop h3 { margin: 0 0 2px; font-size: 14px; line-height: 18px; }
+.teamMemberTop p { margin: 0; color: var(--neutral-40); font-size: 12px; line-height: 16px; }
+.teamStatus {
+  margin-left: auto; max-width: 105px; padding: 5px 7px; border-radius: 999px; text-align: center; font-size: 10px; line-height: 13px; font-weight: 700;
+}
+.teamStatusReady { color: var(--accent-secondary-20); background: var(--accent-secondary-95); }
+.teamStatusInsight { color: var(--accent-primary-30); background: var(--accent-primary-95); }
+.teamStatusNeutral { color: var(--neutral-40); background: var(--neutral-95); }
+.teamMemberDetail { margin: 9px 0 0; color: var(--neutral-40); font-size: 12px; line-height: 17px; }
+.teamMember .textLink { margin-top: 8px; }
+.reassignmentCard {
+  margin-top: 9px; padding: 11px 12px; border: 1px solid var(--neutral-80); border-radius: 13px; background: var(--neutral-100);
+}
+.reassignmentCard strong { display: block; font-size: 13px; line-height: 18px; color: var(--neutral-20); }
+.reassignmentCard p { margin: 4px 0 3px; font-size: 13px; line-height: 18px; color: var(--action-primary-20); font-weight: 600; }
+.reassignmentCard span { font-size: 12px; line-height: 17px; color: var(--neutral-40); }
+.workloadImpact { margin: 12px 0; padding: 11px 12px; border-radius: 13px; background: var(--accent-primary-95); }
+.workloadImpact strong { font-size: 12px; color: var(--accent-primary-30); }
+.workloadImpact p { margin: 5px 0 0; font-size: 12px; line-height: 17px; color: var(--neutral-20); }

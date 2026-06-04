@@ -20,7 +20,9 @@ type Screen =
   | "pdf"
   | "reorder"
   | "jordanHome"
-  | "accountInsight";
+  | "accountInsight"
+  | "monicaSchedule"
+  | "javierSchedule";
 type Tab = "Home" | "Schedule" | "Cases" | "Inventory" | "More";
 
 type Candidate = { name: string; detail: string[]; recommended?: boolean };
@@ -58,6 +60,10 @@ export default function Home() {
   const [appOnly, setAppOnly] = useState(false);
   const [territoryAssistOpen, setTerritoryAssistOpen] = useState(false);
   const [territoryPromptSent, setTerritoryPromptSent] = useState(false);
+  const [scheduleView, setScheduleView] = useState<"day" | "team">("day");
+  const [workloadAssistOpen, setWorkloadAssistOpen] = useState(false);
+  const [workloadPromptSent, setWorkloadPromptSent] = useState(false);
+  const [sallyBalanced, setSallyBalanced] = useState(false);
 
   const personaDetails = persona === "monica"
     ? { initials: "MT", name: "Monica Torres", role: "Clinical Manager" }
@@ -70,7 +76,7 @@ export default function Home() {
     ? "Today’s urgent ICD procedure is now coverage-ready. An upcoming EP case needs specialized support, and a Watchman inventory action can help protect future readiness."
     : "One urgent procedure requires coverage, one upcoming case needs specialized support, and one inventory action can help protect readiness later this week.";
 
-  const showBack = !["home", "javierHome", "jordanHome", "placeholder"].includes(screen);
+  const showBack = !["home", "javierHome", "jordanHome", "monicaSchedule", "javierSchedule", "placeholder"].includes(screen);
   const currentHeading = useMemo(() => {
     const headings: Partial<Record<Screen, string>> = {
       case: "Case readiness",
@@ -95,8 +101,15 @@ export default function Home() {
     setActiveTab(tab);
     setAssistOpen(false);
     setPromptSent(false);
+    setTerritoryAssistOpen(false);
+    setWorkloadAssistOpen(false);
     if (tab === "Home") {
       setScreen(persona === "monica" ? "home" : persona === "javier" ? "javierHome" : "jordanHome");
+    } else if (tab === "Schedule" && persona === "monica") {
+      setScheduleView("day");
+      setScreen("monicaSchedule");
+    } else if (tab === "Schedule" && persona === "javier") {
+      setScreen("javierSchedule");
     } else if (persona === "jordan" && tab === "Cases") {
       setScreen("accountInsight");
     } else if (persona === "javier" && tab === "Cases") {
@@ -154,6 +167,8 @@ export default function Home() {
   function handoffToJordan() { setPersona("jordan"); setScreen("jordanHome"); setActiveTab("Home"); setToast(null); setTerritoryAssistOpen(false); setTerritoryPromptSent(false); }
   function openAccountInsight() { setScreen("accountInsight"); setActiveTab("Cases"); setToast(null); }
   function askTerritoryAssist() { setTerritoryAssistOpen(true); setTerritoryPromptSent(false); }
+  function openWorkloadAssist() { setWorkloadAssistOpen(true); setWorkloadPromptSent(false); }
+  function applyWorkloadChanges() { setSallyBalanced(true); setWorkloadAssistOpen(false); setWorkloadPromptSent(false); setMessage("Recommended schedule changes applied. Sally’s remaining load has been reduced while coverage is maintained."); }
 
   return (
     <main className={`${styles.stage} ${appOnly ? styles.appOnlyStage : ""}`}>
@@ -240,6 +255,8 @@ export default function Home() {
 
         <div className={styles.scrollArea}>
           {screen === "home" && <MonicaHomeScreen assigned={assigned} title={homeTitle} description={homeDescription} onFindCoverage={beginCoverageFlow} onStaticJourney={setMessage} />}
+          {screen === "monicaSchedule" && <MonicaScheduleScreen assigned={assigned} scheduleView={scheduleView} sallyBalanced={sallyBalanced} onChangeView={setScheduleView} onFindCoverage={beginCoverageFlow} onOpenWorkloadAssist={openWorkloadAssist} onStaticJourney={setMessage} />}
+          {screen === "javierSchedule" && <JavierScheduleScreen onOpenCase={openJavierCase} />}
           {screen === "case" && <CaseScreen onFindCoverage={findCoverage} />}
           {screen === "confirm" && selectedCandidate && <ConfirmScreen candidate={selectedCandidate} onConfirm={confirmAssignment} onChooseAnother={findCoverage} />}
           {screen === "ready" && <ReadyScreen onReturnHome={returnToBriefing} onWorkload={() => setMessage("Workload balancing is a planned manager workflow; we are building the connected case lifecycle first.")} />}
@@ -259,15 +276,17 @@ export default function Home() {
 
         {toast && <div className={styles.toast} role="status"><span>{toast}</span><button type="button" onClick={() => setToast(null)} aria-label="Dismiss"><CloseIcon /></button></div>}
 
-        {!assistOpen && !territoryAssistOpen && screen !== "placeholder" && <button className={styles.assistFab} type="button" onClick={() => {
+        {!assistOpen && !territoryAssistOpen && !workloadAssistOpen && screen !== "placeholder" && <button className={styles.assistFab} type="button" onClick={() => {
           if (persona === "monica" && screen === "case") { findCoverage(); }
+          else if (persona === "monica" && screen === "monicaSchedule" && scheduleView === "team") { openWorkloadAssist(); }
           else if (persona === "jordan" && screen === "accountInsight") { askTerritoryAssist(); }
-          else { setMessage(persona === "javier" ? "Assist is available throughout Javier’s case workflow with contextual guidance and capture support." : persona === "jordan" ? "Select the Methodist signal to see how Assist helps prioritize physician outreach." : "Select the urgent CRM case to see Assist recommend qualified coverage."); }
+          else { setMessage(persona === "javier" ? "Assist is available throughout Javier’s schedule and case workflow with contextual guidance and capture support." : persona === "jordan" ? "Select the Methodist signal to see how Assist helps prioritize physician outreach." : "Open a coverage need or Team schedule signal to see Assist recommend the next action."); }
         }} aria-label="Open Assist"><Sparkle />Assist</button>}
 
         <BottomNav active={activeTab} onNavigate={navigateTab} />
         {assistOpen && <AssistSheet promptSent={promptSent} onClose={() => setAssistOpen(false)} onSendPrompt={() => setPromptSent(true)} onSelectCandidate={selectCandidate} />}
         {territoryAssistOpen && <TerritoryAssistSheet promptSent={territoryPromptSent} onClose={() => setTerritoryAssistOpen(false)} onSendPrompt={() => setTerritoryPromptSent(true)} onToast={setMessage} />}
+        {workloadAssistOpen && <WorkloadAssistSheet promptSent={workloadPromptSent} onClose={() => setWorkloadAssistOpen(false)} onSendPrompt={() => setWorkloadPromptSent(true)} onApply={applyWorkloadChanges} />}
       </section>
       {!appOnly && <StoryRail persona={persona} screen={screen} assigned={assigned} onContinueAsJavier={handoffToJavier} onAdvanceToDocumentation={beginDocumentation} onContinueAsJordan={handoffToJordan} />}
       </div>
@@ -283,6 +302,19 @@ function StoryRail({ persona, screen, assigned, onContinueAsJavier, onAdvanceToD
   let description = "Monica opens CardioConnect to a prioritized briefing across representative CRM, EP, and Watchman activity.";
   let outcome = "Coverage risk is surfaced before the team has to search for it.";
   let action: ReactNode = null;
+
+  if (persona === "monica" && screen === "monicaSchedule") {
+    step = 0;
+    title = "The schedule becomes an intelligent action surface.";
+    description = "The foundation of CardioConnect remains visible: scheduled work across CRM, EP, and Watchman. In the future, readiness, capacity, and recommended action are built directly into the mobile schedule.";
+    outcome = "Scheduling evolves from a record of planned work into a live operations view.";
+  }
+  if (persona === "javier" && screen === "javierSchedule") {
+    step = 2; role = "Clinical Representative";
+    title = "New work appears in the rep’s day with readiness attached.";
+    description = "Javier’s personal schedule immediately reflects the new ICD assignment, travel context, and a direct path into case preparation.";
+    outcome = "An assignment decision becomes an actionable field handoff without additional coordination.";
+  }
 
   if (persona === "monica" && ["case", "confirm"].includes(screen)) {
     step = 1;
@@ -367,6 +399,124 @@ function MonicaHomeScreen({ assigned, title, description, onFindCoverage, onStat
   </div>;
 }
 
+
+function ScheduleToggle({ view, onChange }: { view: "day" | "team"; onChange: (view: "day" | "team") => void }) {
+  return <div className={styles.scheduleToggle} aria-label="Schedule view">
+    <button className={view === "day" ? styles.scheduleToggleActive : ""} type="button" onClick={() => onChange("day")}>Day</button>
+    <button type="button" disabled>Week</button>
+    <button className={view === "team" ? styles.scheduleToggleActive : ""} type="button" onClick={() => onChange("team")}>Team</button>
+  </div>;
+}
+
+function DateStrip() {
+  return <div className={styles.dateStrip} aria-label="Select date">
+    <button type="button"><span>Sun</span><strong>21</strong></button>
+    <button type="button" className={styles.dateSelected}><span>Mon</span><strong>22</strong></button>
+    <button type="button"><span>Tue</span><strong>23</strong></button>
+    <button type="button"><span>Wed</span><strong>24</strong></button>
+    <button type="button"><span>Thu</span><strong>25</strong></button>
+  </div>;
+}
+
+function MonicaScheduleScreen({ assigned, scheduleView, sallyBalanced, onChangeView, onFindCoverage, onOpenWorkloadAssist, onStaticJourney }: { assigned: boolean; scheduleView: "day" | "team"; sallyBalanced: boolean; onChangeView: (view: "day" | "team") => void; onFindCoverage: () => void; onOpenWorkloadAssist: () => void; onStaticJourney: (message: string) => void }) {
+  return <div className={styles.screenContent}>
+    <section className={styles.scheduleHeader}>
+      <div>
+        <p className={styles.eyebrow}>Team schedule</p>
+        <h2>Monday, June 22</h2>
+      </div>
+      <button className={styles.filterButton} type="button">Filters</button>
+    </section>
+    <ScheduleToggle view={scheduleView} onChange={onChangeView} />
+    {scheduleView === "day" ? <>
+      <DateStrip />
+      <section className={styles.scheduleSummary}>
+        <div className={styles.assistTag}><Sparkle /> Schedule intelligence</div>
+        <h3>{assigned ? "All coverage confirmed today" : "One coverage gap needs attention today"}</h3>
+        <p>14 procedures · {assigned ? "2 readiness actions remain" : "1 coverage gap · 2 readiness actions remain"}</p>
+      </section>
+      <div className={styles.timeline}>
+        <TimelineEvent time="8:00 AM" division="EP" title="AF Ablation" detail="Abbott Northwestern · Dr. Chen" status="Secondary support recommended" tone="insight" onClick={() => onStaticJourney("This EP secondary support recommendation is available for future expansion.")} />
+        <TimelineEvent time="9:00 AM" division="Watchman" title="LAA Closure" detail="North Memorial · Dr. Patel" status="Inventory review needed" tone="insight" onClick={() => onStaticJourney("This Watchman inventory readiness workflow is represented in the connected case story.")} />
+        <TimelineEvent time="11:30 AM" division="CRM" title="Device Check" detail="Methodist Hospital · Dr. Kim" status="Ready" tone="ready" />
+        <TimelineEvent time="3:00 PM" division="CRM" title="ICD Implant" detail="Methodist Hospital · Dr. Smith" status={assigned ? "Javier Ruiz assigned · Ready" : "Coverage needed"} tone={assigned ? "ready" : "action"} onClick={onFindCoverage} highlighted />
+      </div>
+    </> : <>
+      <section className={styles.scheduleSummary}>
+        <div className={styles.assistTag}><Sparkle /> Capacity intelligence</div>
+        <h3>{sallyBalanced ? "Recommended changes applied" : "One workload concern identified"}</h3>
+        <p>{sallyBalanced ? "Coverage remains ready and Sally’s remaining load is reduced." : "Assist found an opportunity to support Sally after weekend urgent coverage."}</p>
+      </section>
+      <section className={styles.teamStats}>
+        <Metric value="8" label="Clinicals active" />
+        <Metric value="1" label={sallyBalanced ? "Updated plan" : "Capacity concern"} emphasized={sallyBalanced} />
+      </section>
+      <TeamMember name="Javier Ruiz" initials="JR" workload="3 procedures today" detail="ICD at 3:00 PM newly assigned" status="Within target" tone="ready" />
+      <TeamMember name="Sally Morgan" initials="SM" workload={sallyBalanced ? "4 remaining assignments" : "6 procedures over 4 days"} detail={sallyBalanced ? "Two assignments reassigned with coverage maintained" : "Following weekend urgent support"} status={sallyBalanced ? "Schedule balanced" : "Review workload"} tone={sallyBalanced ? "ready" : "insight"} onAction={sallyBalanced ? undefined : onOpenWorkloadAssist} />
+      <TeamMember name="Priya Shah" initials="PS" workload="2 procedures today" detail="Available after 2:15 PM" status="Available capacity" tone="neutral" />
+      <TeamMember name="Mark Wilson" initials="MW" workload="1 procedure + non-procedure work" detail="Flexible for urgent support" status="Flexible" tone="neutral" />
+    </>}
+  </div>;
+}
+
+function TimelineEvent({ time, division, title, detail, status, tone, onClick, highlighted }: { time: string; division: string; title: string; detail: string; status: string; tone: "ready" | "insight" | "action"; onClick?: () => void; highlighted?: boolean }) {
+  return <div className={styles.timelineRow}>
+    <span className={styles.timelineTime}>{time}</span>
+    <button type="button" className={`${styles.timelineCard} ${styles[`timeline${tone[0].toUpperCase()}${tone.slice(1)}`]} ${highlighted ? styles.timelineHighlighted : ""}`} onClick={onClick}>
+      <Chip text={division} tone="division" />
+      <h3>{title}</h3>
+      <p>{detail}</p>
+      <span className={styles.timelineStatus}>{status}</span>
+    </button>
+  </div>;
+}
+
+function TeamMember({ name, initials, workload, detail, status, tone, onAction }: { name: string; initials: string; workload: string; detail: string; status: string; tone: "ready" | "insight" | "neutral"; onAction?: () => void }) {
+  return <section className={`${styles.teamMember} ${tone === "insight" ? styles.teamMemberInsight : ""}`}>
+    <div className={styles.teamMemberTop}>
+      <span className={styles.personAvatar}>{initials}</span>
+      <div><h3>{name}</h3><p>{workload}</p></div>
+      <span className={`${styles.teamStatus} ${styles[`teamStatus${tone[0].toUpperCase()}${tone.slice(1)}`]}`}>{status}</span>
+    </div>
+    <p className={styles.teamMemberDetail}>{detail}</p>
+    {onAction && <button className={styles.textLink} type="button" onClick={onAction}>Review with Assist <ArrowRight /></button>}
+  </section>;
+}
+
+function JavierScheduleScreen({ onOpenCase }: { onOpenCase: () => void }) {
+  return <div className={styles.screenContent}>
+    <section className={styles.scheduleHeader}>
+      <div><p className={styles.eyebrow}>My schedule</p><h2>Monday, June 22</h2></div>
+    </section>
+    <ScheduleToggle view="day" onChange={() => undefined} />
+    <DateStrip />
+    <section className={styles.scheduleSummary}>
+      <div className={styles.assistTag}><Sparkle /> Schedule update</div>
+      <h3>Your day has changed</h3>
+      <p>A newly assigned ICD Implant is ready for your review and preparation.</p>
+    </section>
+    <div className={styles.timeline}>
+      <TimelineEvent time="8:30 AM" division="CRM" title="Device Check" detail="Fairview Southdale · Dr. Hanson" status="Completed" tone="ready" />
+      <div className={styles.bufferRow}><span className={styles.timelineTime}>12:00 PM</span><div className={styles.bufferCard}>Travel / preparation buffer</div></div>
+      <TimelineEvent time="3:00 PM" division="CRM" title="ICD Implant" detail="Methodist Hospital · Dr. Smith" status="New assignment · Open prep" tone="insight" onClick={onOpenCase} highlighted />
+    </div>
+    <button className={styles.primaryButton} type="button" onClick={onOpenCase}>Open case preparation</button>
+  </div>;
+}
+
+function WorkloadAssistSheet({ promptSent, onClose, onSendPrompt, onApply }: { promptSent: boolean; onClose: () => void; onSendPrompt: () => void; onApply: () => void }) {
+  return <div className={styles.sheetBackdrop}><section className={styles.assistSheet} aria-label="Assist workload recommendation"><div className={styles.sheetGrab} /><header className={styles.sheetHeader}><div className={styles.assistTag}><Sparkle /> Assist</div><button className={styles.iconButton} type="button" onClick={onClose} aria-label="Close"><CloseIcon /></button></header>
+    {!promptSent ? <><p className={styles.sheetContext}>Working from Monica’s Team schedule and capacity signals.</p><button className={styles.suggestedPrompt} type="button" onClick={onSendPrompt}>Sally had a difficult weekend. Help me lighten her schedule without impacting coverage.</button></> : <>
+      <div className={styles.userMessage}>Sally had a difficult weekend. Help me lighten her schedule without impacting coverage.</div>
+      <div className={styles.assistantReply}><div className={styles.assistTag}><Sparkle /> Recommendation</div><p>I found two assignments that can be reassigned while preserving qualifications, physician continuity, and procedure readiness.</p></div>
+      <div className={styles.reassignmentCard}><strong>Device Check · Wed 10:00 AM</strong><p>Abbott Northwestern → Priya Shah</p><span>Qualified and already onsite that morning</span></div>
+      <div className={styles.reassignmentCard}><strong>ICD Implant · Thu 1:30 PM</strong><p>Methodist → Javier Ruiz</p><span>Qualified and familiar with Dr. Smith</span></div>
+      <section className={styles.workloadImpact}><strong>Projected impact</strong><p>2 assignments removed · 61 travel miles reduced · Coverage maintained</p></section>
+      <button className={styles.primaryButton} type="button" onClick={onApply}>Apply recommended changes</button>
+    </>}
+  </section></div>;
+}
+
 function CaseScreen({ onFindCoverage }: { onFindCoverage: () => void }) { return <div className={styles.screenContent}>
   <div className={styles.caseTitleBlock}><div className={styles.chipRow}><Chip text="CRM" tone="division" /><Chip text="Coverage needed" tone="action" /></div><h2>ICD Implant</h2><p>Methodist Hospital · Dr. Aaron Smith</p><strong>Today · 3:00 PM</strong></div>
   <section className={styles.surfaceCard}><h3>Readiness summary</h3><ReadinessRow label="Clinical coverage" value="Not assigned" attention /><ReadinessRow label="Procedure details" value="Confirmed" /><ReadinessRow label="Required inventory" value="Available on site" /><ReadinessRow label="Documentation template" value="Prepared after procedure" /><ReadinessRow label="Physician context" value="Available" /></section>
@@ -399,7 +549,7 @@ function JavierHomeScreen({ onOpenCase }: { onOpenCase: () => void }) { return <
 function PrepScreen({ onAskAssist }: { onAskAssist: () => void }) { return <div className={styles.screenContent}>
   <div className={styles.caseTitleBlock}><div className={styles.chipRow}><Chip text="CRM" tone="division" /><Chip text="Ready" tone="positive" /></div><h2>ICD Implant</h2><p>Methodist Hospital · Dr. Aaron Smith</p><strong>Today · 3:00 PM</strong></div>
   <section className={styles.surfaceCard}><h3>Case readiness</h3><ReadinessRow label="Procedure details" value="Confirmed" positive /><ReadinessRow label="Clinical assignment" value="You are assigned" positive /><ReadinessRow label="Required inventory" value="Available on site" positive /><ReadinessRow label="Physician preferences" value="Available" /><ReadinessRow label="Procedure worksheet" value="Template prepared" positive /></section>
-  <section className={styles.inventoryInsight}><div className={styles.assistTag}><Sparkle /> Inventory insight</div><h3>Expiration opportunity identified</h3><p>One compatible ICD lead at Methodist expires in 8 days and may be eligible for this case. If used, stock will fall below par and a reorder request can be prepared after confirmation.</p><button className={styles.textLink} type="button" onClick={onAskAssist}>Ask Assist about inventory <ArrowRight /></button></section>
+  <section className={styles.inventoryInsight}><div className={styles.assistTag}><Sparkle /> Inventory insight</div><h3>Expiration opportunity identified</h3><p>One compatible ICD lead at Methodist expires in 8 days and may be eligible for this case. If used, stock will fall below par and a replenishment request can be prepared after confirmation.</p><button className={styles.textLink} type="button" onClick={onAskAssist}>Ask Assist about inventory <ArrowRight /></button></section>
   <section className={styles.documentationPrepared}><div><p className={styles.subsectionLabel}>Procedure documentation</p><h3>ICD Implant worksheet prepared</h3><p>Available after procedure completion.</p></div><Chip text="Prepared" tone="positive" /></section>
 </div>; }
 
@@ -458,14 +608,14 @@ function ReviewScreen({ onSubmit }: { onSubmit: () => void }) { const sections =
 function PdfScreen({ onReorder, onToast }: { onReorder: () => void; onToast: (message: string) => void }) { return <div className={styles.screenContent}>
   <section className={styles.successBanner}><CheckCircle /><div><h2>Procedure record submitted</h2><p>The ICD Implant record is complete and inventory utilization has been recorded.</p></div></section>
   <section className={styles.surfaceCard}><p className={styles.subsectionLabel}>Generate output</p><h3>Select information to include</h3><div className={styles.checklist}><CheckOption label="Procedure summary" /><CheckOption label="Account and physician details" /><CheckOption label="Implanted devices" /><CheckOption label="Measured data" /><CheckOption label="Programmed parameters" /><CheckOption label="Proof of delivery" /></div><button className={styles.secondaryButton} type="button" onClick={() => onToast("PDF prepared. Print and secure email delivery would be available in the production experience.")}>Generate PDF</button></section>
-  <section className={styles.replenishCard}><div className={styles.assistTag}><Sparkle /> Replenishment recommended</div><h3>Methodist is now below recommended par</h3><p>The ICD lead used reduced expiration risk, but the account now needs reorder to protect future case readiness.</p><button className={styles.primaryInlineButton} type="button" onClick={onReorder}>Review reorder <ArrowRight /></button></section>
+  <section className={styles.replenishCard}><div className={styles.assistTag}><Sparkle /> Replenishment recommended</div><h3>Methodist is now below recommended par</h3><p>The ICD lead used reduced expiration risk, but the account now needs replenishment to protect future case readiness.</p><button className={styles.primaryInlineButton} type="button" onClick={onReorder}>Review reorder <ArrowRight /></button></section>
 </div>; }
 
 function ReorderScreen({ onDone }: { onDone: () => void }) { return <div className={styles.screenContent}>
   <div className={styles.caseTitleBlock}><div className={styles.chipRow}><Chip text="CRM" tone="division" /><Chip text="Recommended" tone="action" /></div><h2>Replenishment request</h2><p>Methodist Hospital · ICD Inventory</p></div>
   <section className={styles.surfaceCard}><h3>Inventory impact</h3><ReadinessRow label="Device used" value="Vigilant™ EL ICD" /><ReadinessRow label="Inventory source" value="Account consignment" /><ReadinessRow label="Expiration avoided" value="8 days remaining" positive /><ReadinessRow label="Current stock" value="Below par" attention /><ReadinessRow label="Recommended quantity" value="1 replacement unit" /></section>
-  <section className={styles.aiInsightCard}><div className={styles.assistTag}><Sparkle /> Assist recommendation</div><p>Prepare a reorder request for one replacement unit to restore the account’s recommended par level before its next scheduled ICD procedure.</p></section>
-  <button className={styles.primaryButton} type="button" onClick={onDone}>Prepare reorder request</button><button className={styles.secondaryButton} type="button">Review account inventory</button>
+  <section className={styles.aiInsightCard}><div className={styles.assistTag}><Sparkle /> Assist recommendation</div><p>Prepare a replenishment request for one replacement unit to restore the account’s recommended par level before its next scheduled ICD procedure.</p></section>
+  <button className={styles.primaryButton} type="button" onClick={onDone}>Prepare replenishment request</button><button className={styles.secondaryButton} type="button">Review account inventory</button>
 </div>; }
 
 
@@ -492,7 +642,7 @@ function JordanHomeScreen({ onOpenAccount, onStaticJourney }: { onOpenAccount: (
     <div className={styles.chipRow}><Chip text="Watchman" tone="division" /></div>
     <h3>North Memorial</h3>
     <p className={styles.cardDescription}>Dr. Elena Patel</p>
-    <p className={styles.supportingText}>Upcoming LAA Closure is ready; reorder is expected after planned device use.</p>
+    <p className={styles.supportingText}>Upcoming LAA Closure is ready; replenishment is expected after planned device use.</p>
     <button className={styles.cardAction} type="button" onClick={() => onStaticJourney("Additional Watchman account insights are not included in this walkthrough.")}>View readiness <ArrowRight /></button>
   </article>
 </div>; }
@@ -502,7 +652,7 @@ function AccountInsightScreen({ onAskAssist }: { onAskAssist: () => void }) { re
   <section className={styles.surfaceCard}><h3>Why this account surfaced</h3>
     <div className={styles.signalReason}><span className={styles.reasonIcon}>1</span><div><strong>Urgent case activity</strong><p>Two urgent CRM add-on procedures were added this week.</p></div></div>
     <div className={styles.signalReason}><span className={styles.reasonIcon}>2</span><div><strong>Coverage response</strong><p>Today’s same-day ICD coverage request was resolved with Javier Ruiz.</p></div></div>
-    <div className={styles.signalReason}><span className={styles.reasonIcon}>3</span><div><strong>Inventory follow-through</strong><p>A reorder request is prepared after documented device use.</p></div></div>
+    <div className={styles.signalReason}><span className={styles.reasonIcon}>3</span><div><strong>Inventory follow-through</strong><p>A replenishment request is prepared after documented device use.</p></div></div>
   </section>
   <section className={styles.aiInsightCard}><div className={styles.assistTag}><Sparkle /> Assist insight</div><p>Recent procedure activity may indicate near-term demand at Methodist. I can help prioritize physician outreach based on account signals and upcoming scheduled cases.</p></section>
   <button className={styles.primaryButton} type="button" onClick={onAskAssist}>Ask which physician to prioritize</button>
