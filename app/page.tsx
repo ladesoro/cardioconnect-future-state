@@ -393,8 +393,8 @@ function MonicaHomeScreen({ assigned, title, description, onFindCoverage, onStat
     <div className={styles.metrics}><Metric value="14" label="Today’s procedures" /><Metric value={assigned ? "14/14" : "13/14"} label="Coverage ready" emphasized={assigned} /><Metric value="2" label="Inventory actions" /></div>
     <div className={styles.sectionHeading}><h3>Needs attention</h3><button className={styles.smallLink} type="button">View all</button></div>
     {!assigned ? <PriorityCard division="CRM" status="Coverage needed" title="ICD Implant" detail="Methodist Hospital · Dr. Aaron Smith" time="Today · 3:00 PM" supporting="No qualified clinical assigned." action="Find coverage" onAction={onFindCoverage} hero /> : <section className={styles.resolvedWrap}><p className={styles.subsectionLabel}>Recently resolved</p><PriorityCard division="CRM" status="Coverage confirmed" title="ICD Implant" detail="Methodist Hospital · Dr. Aaron Smith" time="Today · 3:00 PM" supporting="Assigned to Javier Ruiz." action="View case" onAction={onFindCoverage} resolved /></section>}
-    <PriorityCard division="EP" title="AF Ablation" detail="Abbott Northwestern · Dr. Michael Chen" time="Tomorrow · 8:00 AM" supporting="Certified secondary support recommended." action="Review recommendation" onAction={() => onStaticJourney("EP coverage recommendation will be represented in a future interaction.")} />
-    <PriorityCard division="Watchman" title="LAA Closure" detail="North Memorial · Dr. Elena Patel" time="Wednesday · 9:00 AM" supporting="Planned device use may require replenishment." action="Review inventory plan" onAction={() => onStaticJourney("Watchman inventory readiness will be expanded in a future interaction.")} />
+    <PriorityCard assignee="Alyssa Grant" title="AF Ablation" detail="Abbott Northwestern · Dr. Michael Chen" time="Tomorrow · 8:00 AM" supporting="Certified secondary support recommended." action="Review recommendation" onAction={() => onStaticJourney("EP coverage recommendation will be represented in a future interaction.")} />
+    <PriorityCard assignee="Mark Wilson" title="LAA Closure" detail="North Memorial · Dr. Elena Patel" time="Wednesday · 9:00 AM" supporting="Planned device use may require replenishment." action="Review inventory plan" onAction={() => onStaticJourney("Watchman inventory readiness will be expanded in a future interaction.")} />
     {assigned && <section className={styles.capacityCard}><div className={styles.assistTag}><Sparkle /> Team capacity insight</div><h3>Sally Morgan has elevated workload this week</h3><p>Following weekend urgent support, Sally has six scheduled procedures across the next four days.</p><button className={styles.textLink} type="button" onClick={() => onStaticJourney("Workload rebalancing will be expanded after the connected documentation lifecycle.")}>Review workload options <ArrowRight /></button></section>}
   </div>;
 }
@@ -436,10 +436,10 @@ function MonicaScheduleScreen({ assigned, scheduleView, sallyBalanced, onChangeV
         <p>14 procedures · {assigned ? "2 readiness actions remain" : "1 coverage gap · 2 readiness actions remain"}</p>
       </section>
       <div className={styles.timeline}>
-        <TimelineEvent time="8:00 AM" division="EP" title="AF Ablation" detail="Abbott Northwestern · Dr. Chen" status="Secondary support recommended" tone="insight" onClick={() => onStaticJourney("This EP secondary support recommendation is available for future expansion.")} />
-        <TimelineEvent time="9:00 AM" division="Watchman" title="LAA Closure" detail="North Memorial · Dr. Patel" status="Inventory review needed" tone="insight" onClick={() => onStaticJourney("This Watchman inventory readiness workflow is represented in the connected case story.")} />
-        <TimelineEvent time="11:30 AM" division="CRM" title="Device Check" detail="Methodist Hospital · Dr. Kim" status="Ready" tone="ready" />
-        <TimelineEvent time="3:00 PM" division="CRM" title="ICD Implant" detail="Methodist Hospital · Dr. Smith" status={assigned ? "Javier Ruiz assigned · Ready" : "Coverage needed"} tone={assigned ? "ready" : "action"} onClick={onFindCoverage} highlighted />
+        <TimelineEvent time="8:00 AM" assignee="Alyssa Grant" title="AF Ablation" detail="Abbott Northwestern · Dr. Chen" status="Secondary support recommended" tone="insight" onClick={() => onStaticJourney("This EP secondary support recommendation is available for future expansion.")} />
+        <TimelineEvent time="9:00 AM" assignee="Mark Wilson" title="LAA Closure" detail="North Memorial · Dr. Patel" status="Inventory review needed" tone="insight" onClick={() => onStaticJourney("This Watchman inventory readiness workflow is represented in the connected case story.")} />
+        <TimelineEvent time="11:30 AM" assignee="Sally Morgan" title="Device Check" detail="Methodist Hospital · Dr. Kim" status="Ready" tone="ready" />
+        <TimelineEvent time="3:00 PM" assignee={assigned ? "Javier Ruiz" : "Unassigned"} title="ICD Implant" detail="Methodist Hospital · Dr. Smith" status={assigned ? "Coverage confirmed" : "Coverage needed"} tone={assigned ? "ready" : "action"} onClick={onFindCoverage} highlighted />
       </div>
     </> : <>
       <section className={styles.scheduleSummary}>
@@ -459,11 +459,11 @@ function MonicaScheduleScreen({ assigned, scheduleView, sallyBalanced, onChangeV
   </div>;
 }
 
-function TimelineEvent({ time, division, title, detail, status, tone, onClick, highlighted }: { time: string; division: string; title: string; detail: string; status: string; tone: "ready" | "insight" | "action"; onClick?: () => void; highlighted?: boolean }) {
+function TimelineEvent({ time, assignee, title, detail, status, tone, onClick, highlighted }: { time: string; assignee: string; title: string; detail: string; status: string; tone: "ready" | "insight" | "action"; onClick?: () => void; highlighted?: boolean }) {
   return <div className={styles.timelineRow}>
     <span className={styles.timelineTime}>{time}</span>
     <button type="button" className={`${styles.timelineCard} ${styles[`timeline${tone[0].toUpperCase()}${tone.slice(1)}`]} ${highlighted ? styles.timelineHighlighted : ""}`} onClick={onClick}>
-      <Chip text={division} tone="division" />
+      <Chip text={assignee} tone={assignee === "Unassigned" ? "action" : "division"} />
       <h3>{title}</h3>
       <p>{detail}</p>
       <span className={styles.timelineStatus}>{status}</span>
@@ -496,9 +496,9 @@ function JavierScheduleScreen({ onOpenCase }: { onOpenCase: () => void }) {
       <p>A newly assigned ICD Implant is ready for your review and preparation.</p>
     </section>
     <div className={styles.timeline}>
-      <TimelineEvent time="8:30 AM" division="CRM" title="Device Check" detail="Fairview Southdale · Dr. Hanson" status="Completed" tone="ready" />
+      <TimelineEvent time="8:30 AM" assignee="Javier Ruiz" title="Device Check" detail="Fairview Southdale · Dr. Hanson" status="Completed" tone="ready" />
       <div className={styles.bufferRow}><span className={styles.timelineTime}>12:00 PM</span><div className={styles.bufferCard}>Travel / preparation buffer</div></div>
-      <TimelineEvent time="3:00 PM" division="CRM" title="ICD Implant" detail="Methodist Hospital · Dr. Smith" status="New assignment · Open prep" tone="insight" onClick={onOpenCase} highlighted />
+      <TimelineEvent time="3:00 PM" assignee="Javier Ruiz" title="ICD Implant" detail="Methodist Hospital · Dr. Smith" status="New assignment · Open prep" tone="insight" onClick={onOpenCase} highlighted />
     </div>
     <button className={styles.primaryButton} type="button" onClick={onOpenCase}>Open case preparation</button>
   </div>;
